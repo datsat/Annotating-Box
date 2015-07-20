@@ -1,4 +1,4 @@
-# Annotating-Box
+# Annotation Box
 Annotation box is an alternative for the traditional HTML input boxes (e.g., text input, text area). It allows users to easily associate their input text with DBpedia (and Wikipedia) resources. It lays the foundation for intelligent search and automatic user-generated content processing in a website's back-end.
 
 Resources:
