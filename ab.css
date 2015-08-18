@@ -1,3 +1,16 @@
+.InfoPanel{
+	font-family: 'Arial Unicode MS', 'Microsoft Sans Serif', Tahoma, Arial, sans-serif;
+	font-size: 0.7em;
+	background-color: #F9EDBE;
+	border: 1px solid #F0C36D;
+	position: absolute;
+	padding: 10px;
+	max-width: 300px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+}
 .ResourceList {
 	font-family: 'Arial Unicode MS', 'Microsoft Sans Serif', Tahoma, Arial, sans-serif;
 	font-size: 0.7em;
@@ -6,9 +19,9 @@
 	background: #E7E7E7;
 	margin: 2px;
 	-moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
 	position: absolute;
 }
 
@@ -27,16 +40,21 @@
 	background-color: #f2f2f2;
 	border: 2px solid #f2f2f2;
 	-moz-border-radius: 5px 5px 0px 0px;
-    -webkit-border-radius: 5px 5px 0px 0px;
-    -khtml-border-radius: 5px 5px 0px 0px;
-    border-radius: 5px 5px 0px 0px;
-    padding: 5px;
-    min-height: 150px;
-    width: 400px;
+	-webkit-border-radius: 5px 5px 0px 0px;
+	-khtml-border-radius: 5px 5px 0px 0px;
+	border-radius: 5px 5px 0px 0px;
+	padding: 5px;
+	min-height: 150px;
+	width: 400px;
 }
 
 .SemanticBox p, .SemanticBox div{
 	padding: 0px;
 	margin: 0px;
 	font-size: 1em;
+}
+
+.SemanticBox a:link, .SemanticBox a:visited{
+	color: #0000CD;
+	text-decoration: none;
 }
