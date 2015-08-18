@@ -15,7 +15,7 @@ function SemanticBox(id){
 	}
 	
 	function PanelResource(handlerCallback){
-		var limit = 5;
+		var limit = 10;
 		var text;
 		
 		var panel = document.createElement("DIV");
