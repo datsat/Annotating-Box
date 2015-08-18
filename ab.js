@@ -136,7 +136,7 @@ function SemanticBox(id){
 	var caretInfo;
 	var SPACE = 32, ESC = 27, ENTER = 13, DOWN = 40, UP = 38, CTRL = 17;
 	var panelResource = new PanelResource(function(resource){
-		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a description='" + resource.description.replace(/'/g, '&#39;') + "' href='" +resource.url + "'>" + resource.label + "</a>&nbsp;");
+		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" +resource.url + "'>" + resource.label + "</a>&nbsp;");
 		requesting = false;
 	});
 	var infoPanel = document.createElement("DIV");
@@ -147,12 +147,31 @@ function SemanticBox(id){
 	
 	node.addEventListener("mouseover", function(event){
 		if(event.target.tagName == "A"){
-			var rec = event.target.getBoundingClientRect();
-			infoPanel.style.display = "block";
-			infoPanel.style.left = rec.left; + "px";
-			infoPanel.style.top = rec.bottom + "px";
-			var dbpedia = event.target.href.replace("https://en.wikipedia.org/wiki", "http://dbpedia.org/resource");
-			infoPanel.innerHTML = "<b>Description</b>: " + event.target.getAttribute("description") + "<br>" + "<b>References</b>:<br><a target='_blank' href='" + event.target.href + "'>" + event.target.href + "</a>" + "<br><a target='_blank' href='" + dbpedia + "'>" + dbpedia + "</a>";
+			var title = event.target.href.substring(event.target.href.lastIndexOf("/") + 1);
+			$.ajax({
+				type: 'GET',
+				url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=" + title,
+				dataType: 'jsonp',
+				success: function(data) {
+					var description = "";
+					for (var key in data.query.pages){
+						if (key!="-1")
+							description = data.query.pages[key].extract;
+						if (description.length>400){
+							description = description.substring(0, 400) + "...";
+						}
+					}
+					var rec = event.target.getBoundingClientRect();
+					infoPanel.style.display = "block";
+					infoPanel.style.left = rec.left; + "px";
+					infoPanel.style.top = rec.bottom + "px";
+					var dbpedia = event.target.href.replace("https://en.wikipedia.org/wiki", "http://dbpedia.org/resource");
+					infoPanel.innerHTML = "<b>Description</b>: " + description + "<br>" + "<b>References</b>:<br><a target='_blank' href='" + event.target.href + "'>" + event.target.href + "</a>" + "<br><a target='_blank' href='" + dbpedia + "'>" + dbpedia + "</a>";
+				},
+				error: function(e) {
+					console.log(e.message);
+				}
+			});
 		} else {
 			infoPanel.style.display = "none";
 		}
