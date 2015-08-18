@@ -16,6 +16,7 @@ function SemanticBox(id){
 	
 	function PanelResource(handlerCallback){
 		var limit = 5;
+		var text;
 		
 		var panel = document.createElement("DIV");
 		var focusItem;
@@ -24,6 +25,25 @@ function SemanticBox(id){
 		panel.setAttribute('class', 'ResourceList');
 		panel.style.display = "none";
 		document.body.appendChild(panel);
+		mannual = document.createElement("DIV");
+		mannual.setAttribute('class', 'item');
+		mannual.innerHTML = "Annotate manually ";
+		panel.appendChild(mannual);
+		box = document.createElement("input");
+		box.placeholder = "Enter URL here";
+		box.type = "text";
+		mannual.appendChild(box);
+		button = document.createElement("input");
+		button.type = "button";
+		button.value = "Add";
+		mannual.appendChild(button);
+		button.addEventListener("click", function(event){
+			if (box.value.trim()!=""){
+				handlerCallback(new Resource(text, "", box.value.trim()));
+				box.value = "";
+				panel.style.display = "none";
+			}
+		});
 		
 		this.setPosition = function(left, top){
 			panel.style.left = left + "px";
@@ -31,6 +51,7 @@ function SemanticBox(id){
 		}
 		
 		this.query = function(txt){
+			text = txt;
 			var url = "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&namespace=0&callback=abcd&limit=" + limit + "&search=" + escape(txt);
 			$.ajax({
 				type: 'GET',
@@ -85,10 +106,9 @@ function SemanticBox(id){
 		
 		function process(data){
 			panel.style.display = "block";
-			
 			// Clear the list
-			while (panel.firstChild) {
-				panel.removeChild(panel.firstChild);
+			while (panel.lastChild != mannual) {
+				panel.removeChild(panel.lastChild);
 			}
 			items = [];
 			resources = [];
@@ -116,11 +136,34 @@ function SemanticBox(id){
 	var caretInfo;
 	var SPACE = 32, ESC = 27, ENTER = 13, DOWN = 40, UP = 38, CTRL = 17;
 	var panelResource = new PanelResource(function(resource){
-		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "&nbsp;<a style='font-weight:bold; cursor:help;' title='" + resource.description + "' href='" +resource.url + "'>" + resource.label + "</a>&nbsp;");
+		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a description='" + resource.description.replace(/'/g, '&#39;') + "' href='" +resource.url + "'>" + resource.label + "</a>&nbsp;");
 		requesting = false;
+	});
+	var infoPanel = document.createElement("DIV");
+	infoPanel.setAttribute('class', 'InfoPanel');
+	infoPanel.style.display = "none";
+	document.body.appendChild(infoPanel);
+	
+	
+	node.addEventListener("mouseover", function(event){
+		if(event.target.tagName == "A"){
+			var rec = event.target.getBoundingClientRect();
+			infoPanel.style.display = "block";
+			infoPanel.style.left = rec.left; + "px";
+			infoPanel.style.top = rec.bottom + "px";
+			var dbpedia = event.target.href.replace("https://en.wikipedia.org/wiki", "http://dbpedia.org/resource");
+			infoPanel.innerHTML = "<b>Description</b>: " + event.target.getAttribute("description") + "<br>" + "<b>References</b>:<br><a target='_blank' href='" + event.target.href + "'>" + event.target.href + "</a>" + "<br><a target='_blank' href='" + dbpedia + "'>" + dbpedia + "</a>";
+		} else {
+			infoPanel.style.display = "none";
+		}
+	});
+	
+	node.addEventListener("click", function(event){
+		infoPanel.style.display = "none";
 	});
 	
 	node.addEventListener("keyup", function(event){
+		infoPanel.style.display = "none";
 		if (requesting && event.keyCode != SPACE && event.keyCode != ESC && event.keyCode != ENTER && event.keyCode != DOWN && event.keyCode != UP && event.keyCode != CTRL){
 			var obj = getText(caretInfo.startCaret);
 			caretInfo.text = obj.text;
