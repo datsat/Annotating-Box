@@ -44,8 +44,8 @@
 	-khtml-border-radius: 5px 5px 0px 0px;
 	border-radius: 5px 5px 0px 0px;
 	padding: 5px;
-	min-height: 150px;
-	width: 400px;
+	min-height: 300px;
+	width: 550px;
 }
 
 .SemanticBox p, .SemanticBox div{
