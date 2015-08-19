@@ -6,8 +6,8 @@ function SemanticBox(id){
 		this.getDescription = function(){
 			if (description == null || description == "")
 				return "No description found";
-			else if (description.length > 70){
-				return description.substring(0, 70) + "...";
+			else if (description.length > 200){
+				return description.substring(0, 200) + "...";
 			} else {
 				return description;
 			}
