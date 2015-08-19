@@ -1,5 +1,17 @@
 # Annotation Box
+
 Annotation box is an alternative for the traditional HTML input boxes (e.g., text input, text area). It allows users to easily associate their input text with DBpedia (and Wikipedia) resources. It lays the foundation for intelligent search and automatic user-generated content processing in a website's back-end.
+
+##User guide:
+
+1.	You can use the textbox to link words to Wikipedia resources. This helps the reader of your text to get additional information on specific words.
+2.	To create links, you can place the cursor at the end of a word as you type and press Ctrl+Space. When a list of suggested resources appears, you can choose an appropriate one which matches the written word. After choosing a resource, a link is established and the color of the word changes to blue.
+If no suggestion is relevant, you can use a search engine (e.g., Google) and manually add the link. To close the list, press Escape. 
+3.	To link a compound word, select and highlight related words and press Ctrl+Space.
+4.	When linking is finished, you can move the mouse over the annotated text to show an information panel containing additional info based on the linked page. You can use the “Remove” button in this panel to detach the created link from your text.
+
+
+##Developer guide
 
 Resources:
 (i) ab.js: JavaScript source code, (ii) ab.css: CSS source code, (iii) example.html: An example to create an annotation box
