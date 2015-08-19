@@ -16,7 +16,7 @@ function SemanticBox(id){
 	
 	function PanelResource(handlerCallback){
 		var limit = 10;
-		var text;
+		this.text = "";
 		
 		var panel = document.createElement("DIV");
 		var focusItem;
@@ -39,10 +39,14 @@ function SemanticBox(id){
 		mannual.appendChild(button);
 		button.addEventListener("click", function(event){
 			if (box.value.trim()!=""){
-				handlerCallback(new Resource(text, "", box.value.trim()));
+				handlerCallback(new Resource(this.text, "", box.value.trim()));
 				box.value = "";
 				panel.style.display = "none";
 			}
+		});
+		box.addEventListener("click", function(event){
+			event.stopPropagation();
+			event.preventDefault();
 		});
 		
 		this.setPosition = function(left, top){
@@ -51,7 +55,7 @@ function SemanticBox(id){
 		}
 		
 		this.query = function(txt){
-			text = txt;
+			this.text = txt;
 			var url = "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&namespace=0&callback=abcd&limit=" + limit + "&search=" + escape(txt);
 			$.ajax({
 				type: 'GET',
@@ -136,13 +140,18 @@ function SemanticBox(id){
 	var caretInfo;
 	var SPACE = 32, ESC = 27, ENTER = 13, DOWN = 40, UP = 38, CTRL = 17;
 	var panelResource = new PanelResource(function(resource){
-		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" +resource.url + "'>" + resource.label + "</a>&nbsp;");
+		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" +resource.url + "'>" + panelResource.text + "</a>");
 		requesting = false;
 	});
 	var infoPanel = document.createElement("DIV");
 	infoPanel.setAttribute('class', 'InfoPanel');
 	infoPanel.style.display = "none";
 	document.body.appendChild(infoPanel);
+	document.addEventListener("click", function(event){
+		infoPanel.style.display = "none";
+		panelResource.esc();
+		requesting = false;
+	});
 	
 	
 	node.addEventListener("mouseover", function(event){
