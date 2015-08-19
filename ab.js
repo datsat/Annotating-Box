@@ -148,15 +148,20 @@ function SemanticBox(id){
 	infoPanel.style.display = "none";
 	document.body.appendChild(infoPanel);
 	document.addEventListener("click", function(event){
-		infoPanel.style.display = "none";
-		panelResource.esc();
-		requesting = false;
+		if (event.target != infoPanel){
+			infoPanel.style.display = "none";
+			panelResource.esc();
+			requesting = false;
+		}
 	});
+	var activeLink;
+	
 	
 	
 	node.addEventListener("mouseover", function(event){
 		if(event.target.tagName == "A"){
-			var title = event.target.href.substring(event.target.href.lastIndexOf("/") + 1);
+			activeLink = event.target;
+			var title = activeLink.href.substring(activeLink.href.lastIndexOf("/") + 1);
 			$.ajax({
 				type: 'GET',
 				url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=" + title,
@@ -170,12 +175,20 @@ function SemanticBox(id){
 							description = description.substring(0, 400) + "...";
 						}
 					}
-					var rec = event.target.getBoundingClientRect();
+					var rec = activeLink.getBoundingClientRect();
 					infoPanel.style.display = "block";
 					infoPanel.style.left = rec.left; + "px";
 					infoPanel.style.top = rec.bottom + "px";
-					var dbpedia = event.target.href.replace("https://en.wikipedia.org/wiki", "http://dbpedia.org/resource");
-					infoPanel.innerHTML = "<b>Description</b>: " + description + "<br>" + "<b>References</b>:<br><a target='_blank' href='" + event.target.href + "'>" + event.target.href + "</a>" + "<br><a target='_blank' href='" + dbpedia + "'>" + dbpedia + "</a>";
+					var dbpedia = activeLink.href.replace("https://en.wikipedia.org/wiki", "http://dbpedia.org/resource");
+					infoPanel.innerHTML = "<b>Description</b>: " + description + "<br>" + "<b>References</b>:<br><a target='_blank' href='" + activeLink.href + "'>" + activeLink.href + "</a>" + "<br><a target='_blank' href='" + dbpedia + "'>" + dbpedia + "</a><br><br>";
+					
+					var rmbutton = document.createElement("input");
+					rmbutton.type = "button";
+					rmbutton.value = "Remove annotation";
+					infoPanel.appendChild(rmbutton);
+					rmbutton.addEventListener("click", function(event){
+						activeLink.parentNode.replaceChild(document.createTextNode(activeLink.text), activeLink);
+					});
 				},
 				error: function(e) {
 					console.log(e.message);
