@@ -14,6 +14,22 @@ function SemanticBox(id){
 		}
 	}
 	
+	/**
+	* Generate Wikipedia link from DBpedia link and vise versa
+	**/
+	function getLink(link, dbpedia){
+		if (dbpedia)
+			return link.replace("https://en.wikipedia.org/wiki", "http://dbpedia.org/resource");
+		else
+			return link.replace("http://dbpedia.org/resource", "https://en.wikipedia.org/wiki");
+	}
+	
+	this.getHTML = function(){
+		var res = document.getElementById(id).innerHTML;
+		res = res.replace(/<div>/g, '<br>').replace(/<\/div>/g, '').replace(/<p>/g, '<br>').replace(/<\/p>/g, '').replace(/&nbsp;/g, ' ');
+		return res;
+	}
+	
 	function PanelResource(handlerCallback){
 		var limit = 10;
 		this.text = "";
@@ -140,7 +156,7 @@ function SemanticBox(id){
 	var caretInfo;
 	var SPACE = 32, ESC = 27, ENTER = 13, DOWN = 40, UP = 38, CTRL = 17;
 	var panelResource = new PanelResource(function(resource){
-		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" +resource.url + "'>" + panelResource.text + "</a>");
+		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" + getLink(resource.url, true) + "'>" + panelResource.text + "</a>");
 		requesting = false;
 	});
 	var infoPanel = document.createElement("DIV");
@@ -179,7 +195,7 @@ function SemanticBox(id){
 					infoPanel.style.display = "block";
 					infoPanel.style.left = rec.left; + "px";
 					infoPanel.style.top = rec.bottom + "px";
-					var dbpedia = activeLink.href.replace("https://en.wikipedia.org/wiki", "http://dbpedia.org/resource");
+					var dbpedia = getLink(activeLink.href, false);
 					infoPanel.innerHTML = "<b>Description</b>: " + description + "<br>" + "<b>References</b>:<br><a target='_blank' href='" + activeLink.href + "'>" + activeLink.href + "</a>" + "<br><a target='_blank' href='" + dbpedia + "'>" + dbpedia + "</a><br><br>";
 					
 					var rmbutton = document.createElement("input");
