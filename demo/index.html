@@ -16,12 +16,53 @@
 			$("#btn").click(function(){
 				$("#code").html(sb.getHTML().toHtmlEntities());
 			});
+			
+			$("#chkAutocomplete").prop('checked', false);
+			$("#chkTooltip").prop('checked', true);
+			$("#chkAutocomplete").click(function(){
+				sb.setEnabledAutocomplete($("#chkAutocomplete").prop('checked'));
+			});
+			$("#chkTooltip").click(function(){
+				sb.setEnabledTooltip($("#chkTooltip").prop('checked'));
+			});
+			
+			
+			$("#chkCtrlSpace").prop('checked', true);
+			$("#chkTab").prop('checked', false);
+			$("#chkRightClick").prop('checked', false);
+			$("#chkCtrlSpace").click(function(){
+				sb.setActivationMethod(1);
+			});
+			$("#chkTab").click(function(){
+				sb.setActivationMethod(2);
+			});
+			$("#chkRightClick").click(function(){
+				sb.setActivationMethod(3);
+			});
 		});
 		
     </script>
 </head>
 <body>
-    <div class="SemanticBox" id="semanticbox" contentEditable="true"></div>
+	<table>
+	<tr>
+	<td>
+	<div class="SemanticBox" id="semanticbox" contentEditable="true"></div>
+	</td>
+	<td>
+	<h3>Dynamic options</h3>
+	<input type="checkbox" name="option" id="chkAutocomplete"></input><label for="chkAutocomplete">Enable Auto-complete<label><br>
+	<input type="checkbox" checked name="option" id="chkTooltip"></input><label for="chkTooltip">Enable tooltips<label><br><br>
+	<fieldset>
+		<legend>Activation method</legend>
+		<input type="radio" checked name="activation" id="chkCtrlSpace"></input><label for="chkCtrlSpace">Use "Ctrl+Space"<label><br>
+		<input type="radio" name="activation" id="chkTab"></input><label for="chkTab">Use "Tab"<label><br>
+		<input type="radio" name="activation" id="chkRightClick"></input><label for="chkRightClick">Use "Right mouse click"<label><br>
+	</fieldset>
+	
+	</td>
+	</tr>
+	<table>
 	<input type="button" value="Get Code" id="btn"\>
 	<div id="code" style="max-width:700px"></div>
 </body>
