@@ -30,6 +30,22 @@ function SemanticBox(id){
 		return res;
 	}
 	
+	var autocomplete = false;
+	var tooltip = true;
+	/**
+	1:Ctrl+Space, 2: Tab, 3: Right mouse click
+	**/
+	var activationMethod = 1;
+	this.setEnabledAutocomplete = function(value){
+		autocomplete = value;
+	}
+	this.setEnabledTooltip = function(value){
+		tooltip = value;
+	}
+	this.setActivationMethod = function(value){
+		activationMethod = value;
+	}
+	
 	function PanelResource(handlerCallback){
 		var limit = 10;
 		this.text = "";
@@ -154,9 +170,15 @@ function SemanticBox(id){
 	var node = document.getElementById(id);
 	var requesting = false;
 	var caretInfo;
-	var SPACE = 32, ESC = 27, ENTER = 13, DOWN = 40, UP = 38, CTRL = 17;
+	var SPACE = 32, ESC = 27, ENTER = 13, DOWN = 40, UP = 38, CTRL = 17, TAB = 9;
 	var panelResource = new PanelResource(function(resource){
-		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" + getLink(resource.url, true) + "'>" + panelResource.text + "</a>");
+		var txt;
+		if (autocomplete){
+			txt = resource.label;
+		} else {
+			txt = panelResource.text;
+		}
+		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" + getLink(resource.url, true) + "'>" + txt + "</a>");
 		requesting = false;
 	});
 	var infoPanel = document.createElement("DIV");
@@ -175,7 +197,7 @@ function SemanticBox(id){
 	
 	
 	node.addEventListener("mouseover", function(event){
-		if(event.target.tagName == "A"){
+		if(tooltip && event.target.tagName == "A"){
 			activeLink = event.target;
 			var title = activeLink.href.substring(activeLink.href.lastIndexOf("/") + 1);
 			$.ajax({
@@ -221,7 +243,7 @@ function SemanticBox(id){
 	
 	node.addEventListener("keyup", function(event){
 		infoPanel.style.display = "none";
-		if (requesting && event.keyCode != SPACE && event.keyCode != ESC && event.keyCode != ENTER && event.keyCode != DOWN && event.keyCode != UP && event.keyCode != CTRL){
+		if (requesting && event.keyCode != SPACE && event.keyCode != ESC && event.keyCode != ENTER && event.keyCode != DOWN && event.keyCode != UP && event.keyCode != CTRL && event.keyCode != TAB){
 			var obj = getText(caretInfo.startCaret);
 			caretInfo.text = obj.text;
 			caretInfo.endCaret = obj.endCaret;
@@ -229,7 +251,17 @@ function SemanticBox(id){
 		}
 	});
 	
+	node.addEventListener('contextmenu', function(event) {
+		event.preventDefault();
+		if (activationMethod == 3)
+			handle(event);
+		return false;
+	}, false);
+	
 	node.addEventListener("keydown", function(event){
+		var activated = (activationMethod == 1 && event.ctrlKey && event.keyCode == SPACE)||
+						(activationMethod == 2 && event.keyCode == TAB);
+		console.log("d");
 		if (requesting){
 			if (event.keyCode == UP){
 				event.stopPropagation();
@@ -249,21 +281,26 @@ function SemanticBox(id){
 				panelResource.esc();
 				requesting = false;
 			}
-		} else if (event.ctrlKey && event.keyCode == SPACE){
-			event.stopPropagation();
-			event.preventDefault();
-			caretInfo = getCaretInfos();
-			if (caretInfo.text != null && caretInfo.text != ""){
-				panelResource.setPosition(caretInfo.left, caretInfo.top);
-				panelResource.query(caretInfo.text);
-				requesting = true;
-			} else {
-				panelResource.esc();
-				requesting = false;
-				console.log("Please place the cursor right after the text, and do not select the tagged text!");
-			}
+		} else if (activated){
+			handle(event);
 		}
 	});
+	
+	
+	function handle(event){
+		event.stopPropagation();
+		event.preventDefault();
+		caretInfo = getCaretInfos();
+		if (caretInfo.text != null && caretInfo.text != ""){
+			panelResource.setPosition(caretInfo.left, caretInfo.top);
+			panelResource.query(caretInfo.text);
+			requesting = true;
+		} else {
+			panelResource.esc();
+			requesting = false;
+			console.log("Please place the cursor right after the text, and do not select the tagged text!");
+		}
+	}
 	
 	function getPath(range){
 		var container = range.startContainer;
