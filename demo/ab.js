@@ -178,7 +178,7 @@ function SemanticBox(id){
 		} else {
 			txt = panelResource.text;
 		}
-		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" + getLink(resource.url, true) + "'>" + txt + "</a>");
+		insert(caretInfo.pathToCaretContainer, caretInfo.startCaret, caretInfo.endCaret, "<a href='" + getLink(resource.url, true) + "'>" + txt + "</a>&nbsp;");
 		requesting = false;
 	});
 	var infoPanel = document.createElement("DIV");
